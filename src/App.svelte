@@ -7,8 +7,12 @@
   let weatherVisible = false;
   const params = new URLSearchParams(window.location.search);
   let errorMessage = "";
-  const tempUnit: string = params.has("tempUnit") ? params.get("tempUnit") : 'imperial';
+  let tempUnit: string = "imperial";
 
+  if (params.has("tempUnit") && (params.get("tempUnit")=="imperial" || params.get("tempUnit")=="metric")) {
+    tempUnit = params.get("tempUnit");
+  } 
+  
   if (!params.has("lat") || !params.has("lon")) {
     errorMessage = "Missing required params.";
   } else {
