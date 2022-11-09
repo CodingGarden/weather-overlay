@@ -49,8 +49,8 @@
         />
       </div>
       <div class="temperature">
-        {currentWeather.temperature.F}<span class="unit">°F</span>
-        <!-- {currentWeather.temperature.C} <span class="unit">°C</span> -->
+        <!-- {currentWeather.temperature.F}<span class="unit">°F</span>-->
+        {currentWeather.temperature.C} <span class="unit">°C</span>
       </div>
       <div class="wind">
         <div class="wind-direction" style:transform={`rotate(${currentWeather.wind_from_direction}deg)`}>
