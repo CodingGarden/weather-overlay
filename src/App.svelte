@@ -44,8 +44,9 @@
     <div class="container" transition:fly="{{ x: -600, duration: 2000 }}">
       <div class="background"></div>
       <div class="symbol-container">
+        <!-- TODO : Find better ALT text-->
         <img
-          src={`images/svg/${currentWeather.symbol_code}.svg`}
+          src={`images/svg/${currentWeather.symbol_code}.svg`} alt={`${currentWeather.symbol_code}`}
         />
       </div>
       <div class="temperature">
