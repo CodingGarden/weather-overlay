@@ -7,6 +7,8 @@
   let weatherVisible = false;
   const params = new URLSearchParams(window.location.search);
   let errorMessage = "";
+  const tempUnit: string = params.has("tempUnit") ? params.get("tempUnit") : 'imperial';
+
   if (!params.has("lat") || !params.has("lon")) {
     errorMessage = "Missing required params.";
   } else {
@@ -18,12 +20,13 @@
       currentWeather = await getWeather({
         latitude: Number(params.get("lat")),
         longitude: Number(params.get("lon")),
+        temp_unit: tempUnit,
       });
     } catch (error) {
       errorMessage = error.message;
     }
   }
-
+  
   async function getLatestAndShow() {
     if (!weatherVisible) {
       await getCurrentWeather();
@@ -34,6 +37,7 @@
       setTimeout(getLatestAndShow, 60 * 1000);
     }
   }
+
 </script>
 
 <main>
@@ -50,8 +54,7 @@
         />
       </div>
       <div class="temperature">
-        <!-- {currentWeather.temperature.F}<span class="unit">°F</span>-->
-        {currentWeather.temperature.C} <span class="unit">°C</span>
+        {currentWeather.temperature.local} <span class="unit">{currentWeather.temperature.symbol}</span>
       </div>
       <div class="wind">
         <div class="wind-direction" style:transform={`rotate(${currentWeather.wind_from_direction}deg)`}>

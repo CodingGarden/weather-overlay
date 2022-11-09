@@ -3,6 +3,7 @@ import type { Data, Root } from "../interfaces/WeatherResponse";
 interface GetWeatherOptions {
   latitude: number;
   longitude: number;
+  temp_unit: string;
 }
 
 export interface WeatherResult {
@@ -13,6 +14,8 @@ export interface WeatherResult {
     mph: number | string;
   },
   temperature: {
+    local: number | String;
+    symbol: string,
     C: number | string;
     F: number | string;
   },
@@ -25,6 +28,7 @@ let cacheTime = 35 * 60 * 1000;
 export async function getWeather({
   latitude,
   longitude,
+  temp_unit,
 }: GetWeatherOptions): Promise<WeatherResult> {
   if (lastResult && (Date.now() < lastFetchDate + (cacheTime))) {
     return lastResult;
@@ -35,6 +39,9 @@ export async function getWeather({
     const data: Data | null = json.properties?.timeseries[0]?.data || null;
     const temperatureC: string | number =  data?.instant?.details?.air_temperature !== undefined ? Math.floor(data?.instant?.details?.air_temperature) : 'N/A';
     const temperatureF: string | number = (temperatureC !== 'N/A') ? Math.floor((temperatureC as number) * 9 / 5 + 32) : 'N/A';
+    const temperatureLocal: string | number = temp_unit == 'imperial' ? temperatureF : temperatureC;
+    const temperatureSymbol: string = temp_unit == 'imperial' ? '°F' : '°C';
+     
     const mph = data?.instant?.details?.wind_speed ?  Math.floor(data?.instant?.details?.wind_speed * 2.2369362921) : 'N/A';
     const kph = data?.instant?.details?.wind_speed ? Math.floor(data?.instant?.details?.wind_speed * 3.6) : 'N/A';
     lastResult = {
@@ -45,6 +52,8 @@ export async function getWeather({
         mph,
       },
       temperature: {
+        local: temperatureLocal,
+        symbol: temperatureSymbol,
         C: temperatureC,
         F: temperatureF,
       },
