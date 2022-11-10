@@ -1,63 +1,79 @@
 <script lang="ts">
-  import { fly } from 'svelte/transition';
-  import type { WeatherResult } from "./lib/weatherAPI";
-  import { getWeather } from "./lib/weatherAPI";
+  import { fly, fade } from 'svelte/transition'
+  import type { WeatherResult } from './lib/weatherAPI'
+  import { getWeather } from './lib/weatherAPI'
 
-  let currentWeather: WeatherResult | null = null;
-  let weatherVisible = false;
-  const params = new URLSearchParams(window.location.search);
-  let errorMessage = "";
-  if (!params.has("lat") || !params.has("lon")) {
-    errorMessage = "Missing required params.";
+  let currentWeather: WeatherResult | null = null
+  let weatherVisible = false
+  const params = new URLSearchParams(window.location.search)
+  let errorMessage = ''
+
+  if (!params.has('lat') || !params.has('lon')) {
+    errorMessage =
+      'Requires location parameters in the url.\n\nExample: https://site.location.com/?lat=40.7128&lon=74.0060'
   } else {
-    getLatestAndShow();
+    getLatestAndShow()
   }
 
   async function getCurrentWeather() {
     try {
       currentWeather = await getWeather({
-        latitude: Number(params.get("lat")),
-        longitude: Number(params.get("lon")),
-      });
+        latitude: Number(params.get('lat')),
+        longitude: Number(params.get('lon')),
+      })
     } catch (error) {
-      errorMessage = error.message;
+      errorMessage = error.message
     }
   }
 
   async function getLatestAndShow() {
     if (!weatherVisible) {
-      await getCurrentWeather();
-      weatherVisible = true;
-      setTimeout(getLatestAndShow, 10 * 1000);
+      await getCurrentWeather()
+      weatherVisible = true
+      setTimeout(getLatestAndShow, 10 * 1000)
     } else {
-      weatherVisible = false;
-      setTimeout(getLatestAndShow, 60 * 1000);
+      weatherVisible = false
+      setTimeout(getLatestAndShow, 60 * 1000)
     }
   }
 </script>
 
 <main>
   {#if errorMessage}
-    <div>{errorMessage}</div>
+    <div class="error">{errorMessage}</div>
   {/if}
   {#if currentWeather && weatherVisible}
-    <div class="container" transition:fly="{{ x: -600, duration: 2000 }}">
-      <div class="background"></div>
+    <div class="container" transition:fly={{ x: -600, duration: 2000 }}>
+      <div class="background" />
       <div class="symbol-container">
-        <img
-          src={`images/svg/${currentWeather.symbol_code}.svg`}
-        />
+        <img src={`images/svg/${currentWeather.symbol_code}.svg`} />
       </div>
       <div class="temperature">
         {currentWeather.temperature.F}<span class="unit">°F</span>
         <!-- {currentWeather.temperature.C} <span class="unit">°C</span> -->
       </div>
       <div class="wind">
-        <div class="wind-direction" style:transform={`rotate(${currentWeather.wind_from_direction}deg)`}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-wind-icon">
-            <path d="M19.3,8.7c0.8,0.8,0.8,2,0,2.8c-0.8,0.8-2,0.8-2.8,0c-0.4-0.4-0.6-0.9-0.6-1.4v-8 M4.5,8.7  c-0.8,0.8-0.8,2,0,2.8c0.8,0.8,2,0.8,2.8,0c0.4-0.4,0.6-0.9,0.6-1.4v-8 M11.9,19.6V2.1"/>
-            <line x1="11.9" y1="7.9" x2="11.9" y2="21.9"/>
-            <polyline points="18.9,14.9 11.9,21.9 4.9,14.9 "/>
+        <div
+          class="wind-direction"
+          style:transform={`rotate(${currentWeather.wind_from_direction}deg)`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="arrow-wind-icon"
+          >
+            <path
+              d="M19.3,8.7c0.8,0.8,0.8,2,0,2.8c-0.8,0.8-2,0.8-2.8,0c-0.4-0.4-0.6-0.9-0.6-1.4v-8 M4.5,8.7  c-0.8,0.8-0.8,2,0,2.8c0.8,0.8,2,0.8,2.8,0c0.4-0.4,0.6-0.9,0.6-1.4v-8 M11.9,19.6V2.1"
+            />
+            <line x1="11.9" y1="7.9" x2="11.9" y2="21.9" />
+            <polyline points="18.9,14.9 11.9,21.9 4.9,14.9 " />
           </svg>
         </div>
         <div class="wind-speed">
@@ -65,9 +81,7 @@
           <!-- {currentWeather.wind_speed.kph} km/h -->
         </div>
       </div>
-      <div class="credit">
-        Data from MET Norway
-      </div>
+      <div class="credit">Data from MET Norway</div>
     </div>
   {/if}
 </main>
@@ -156,5 +170,13 @@
     font-style: italic;
     text-align: center;
     font-weight: 200;
+  }
+
+  div.error {
+    font-size: 5vmin;
+    font-weight: 200;
+    text-align: center;
+    color: black;
+    background-color: white;
   }
 </style>
