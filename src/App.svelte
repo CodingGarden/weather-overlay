@@ -7,6 +7,12 @@
   let weatherVisible = false;
   const params = new URLSearchParams(window.location.search);
   let errorMessage = "";
+  let tempUnit: string = "imperial";
+
+  if (params.has("tempUnit") && (params.get("tempUnit")=="imperial" || params.get("tempUnit")=="metric")) {
+    tempUnit = params.get("tempUnit");
+  } 
+  
   if (!params.has("lat") || !params.has("lon")) {
     errorMessage = "Missing required params.";
   } else {
@@ -18,12 +24,13 @@
       currentWeather = await getWeather({
         latitude: Number(params.get("lat")),
         longitude: Number(params.get("lon")),
+        temp_unit: tempUnit,
       });
     } catch (error) {
       errorMessage = error.message;
     }
   }
-
+  
   async function getLatestAndShow() {
     if (!weatherVisible) {
       await getCurrentWeather();
@@ -34,6 +41,7 @@
       setTimeout(getLatestAndShow, 60 * 1000);
     }
   }
+
 </script>
 
 <main>
@@ -44,13 +52,13 @@
     <div class="container" transition:fly="{{ x: -600, duration: 2000 }}">
       <div class="background"></div>
       <div class="symbol-container">
+        <!-- TODO : Find better ALT text-->
         <img
-          src={`images/svg/${currentWeather.symbol_code}.svg`}
+          src={`images/svg/${currentWeather.symbol_code}.svg`} alt={`${currentWeather.symbol_code}`}
         />
       </div>
       <div class="temperature">
-        {currentWeather.temperature.F}<span class="unit">°F</span>
-        <!-- {currentWeather.temperature.C} <span class="unit">°C</span> -->
+        {currentWeather.temperature.local} <span class="unit">{currentWeather.temperature.symbol}</span>
       </div>
       <div class="wind">
         <div class="wind-direction" style:transform={`rotate(${currentWeather.wind_from_direction}deg)`}>
