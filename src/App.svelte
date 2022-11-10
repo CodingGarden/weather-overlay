@@ -7,12 +7,15 @@
   let weatherVisible = false
   const params = new URLSearchParams(window.location.search)
   let errorMessage = ''
+  let showMetric = false
+  let showDuration = 20000
+  let hideDuration = 60000
 
   if (!params.has('lat') || !params.has('lon')) {
     errorMessage =
       'Requires location parameters in the url.\n\nExample: https://site.location.com/?lat=40.7128&lon=74.0060'
   } else {
-    getLatestAndShow()
+    getLatestAndShowOrHide()
   }
 
   async function getCurrentWeather() {
@@ -26,14 +29,16 @@
     }
   }
 
-  async function getLatestAndShow() {
+  async function getLatestAndShowOrHide() {
     if (!weatherVisible) {
+      showMetric = false
       await getCurrentWeather()
       weatherVisible = true
-      setTimeout(getLatestAndShow, 10 * 1000)
+      setTimeout(() => (showMetric = true), showDuration / 2)
+      setTimeout(getLatestAndShowOrHide, showDuration)
     } else {
       weatherVisible = false
-      setTimeout(getLatestAndShow, 60 * 1000)
+      setTimeout(getLatestAndShowOrHide, hideDuration)
     }
   }
 </script>
@@ -46,12 +51,18 @@
     <div class="container" transition:fly={{ x: -600, duration: 2000 }}>
       <div class="background" />
       <div class="symbol-container">
+        <!-- svelte-ignore a11y-missing-attribute -->
         <img src={`images/svg/${currentWeather.symbol_code}.svg`} />
       </div>
-      <div class="temperature">
-        {currentWeather.temperature.F}<span class="unit">°F</span>
-        <!-- {currentWeather.temperature.C} <span class="unit">°C</span> -->
-      </div>
+      {#if !showMetric}
+        <div class="temperature">
+          {currentWeather.temperature.F} <span class="unit">°F</span>
+        </div>
+      {:else}
+        <div in:fade class="temperature">
+          {currentWeather.temperature.C} <span class="unit">°C</span>
+        </div>
+      {/if}
       <div class="wind">
         <div
           class="wind-direction"
