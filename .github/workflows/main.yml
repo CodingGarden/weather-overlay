@@ -1,0 +1,16 @@
+name: Deploy weather-overlay
+
+on: push
+
+jobs:
+  my-job:
+    name: My job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to de-weather-overlay.surge.sh
+        uses: dswistowski/surge-sh-action@v1
+        with:
+          domain: 'de-weather-overlay.surge.sh'
+          project: './dist'
+          login: ${{ secrets.surge_login }}
+          token: ${{ secrets.surge_token }}
