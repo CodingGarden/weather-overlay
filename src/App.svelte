@@ -32,7 +32,7 @@
   async function getLatestAndShowOrHide() {
     if (!weatherVisible) {
       showMetric = false;
-      await getCurrentWeather()
+      await getCurrentWeather();
       weatherVisible = true;
       setTimeout(() => (showMetric = true), showDuration / 2);
       setTimeout(getLatestAndShowOrHide, showDuration);
