@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fly, fade } from "svelte/transition";
+  import { fly, fade } from 'svelte/transition';
   import type { WeatherResult } from "./lib/weatherAPI";
   import { getWeather } from "./lib/weatherAPI";
 
@@ -13,7 +13,7 @@
 
   if (!params.has("lat") || !params.has("lon")) {
     errorMessage =
-      'Requires location parameters in the url.\n\nExample: https://site.location.com/?lat=40.7128&lon=74.0060';
+      "Requires location parameters in the url.\n\nExample: https://site.location.com/?lat=40.7128&lon=74.0060";
   } else {
     getLatestAndShowOrHide();
   }
@@ -51,7 +51,7 @@
     <div class="container" transition:fly="{{ x: -600, duration: 2000 }}">
       <div class="background"></div>
       <div class="symbol-container">
-        <img 
+        <img
           src={`images/svg/${currentWeather.symbol_code}.svg`}
         />
       </div>
