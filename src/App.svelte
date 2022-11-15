@@ -34,6 +34,17 @@
       setTimeout(getLatestAndShow, 60 * 1000);
     }
   }
+  
+  function getWindDirectionFrom(deg:number, type=1) {
+    const windDirTypes = [
+      "N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW",
+      "N,NE,E,SE,S,SW,W,NW",
+    ];
+    const windDirs = windDirTypes[type].split(",");
+    const sections = 360 / windDirs.length;
+    return windDirs[Math.floor((deg + sections * .5) / sections) % windDirs.length];
+  }
+  
 </script>
 
 <main>
@@ -54,10 +65,24 @@
       </div>
       <div class="wind">
         <div class="wind-direction" style:transform={`rotate(${currentWeather.wind_from_direction}deg)`}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-wind-icon">
-            <path d="M19.3,8.7c0.8,0.8,0.8,2,0,2.8c-0.8,0.8-2,0.8-2.8,0c-0.4-0.4-0.6-0.9-0.6-1.4v-8 M4.5,8.7  c-0.8,0.8-0.8,2,0,2.8c0.8,0.8,2,0.8,2.8,0c0.4-0.4,0.6-0.9,0.6-1.4v-8 M11.9,19.6V2.1"/>
-            <line x1="11.9" y1="7.9" x2="11.9" y2="21.9"/>
-            <polyline points="18.9,14.9 11.9,21.9 4.9,14.9 "/>
+          <svg id="windIcon" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="--iconColor: currentColor" class="arrow-wind-icon">
+            <text 
+                  fill=var(--iconColor) 
+                  font-size={["6","5","4"][getWindDirectionFrom(currentWeather.wind_from_direction).length - 1]} 
+                  x="12" 
+                  y="5.5" 
+                  text-anchor="middle" 
+                  dominant-baseline="central" 
+                  transform={`rotate(-${currentWeather.wind_from_direction}, 12, 5.5)`}>
+              {getWindDirectionFrom(currentWeather.wind_from_direction)}
+            </text>
+            <g fill="none" stroke=var(--iconColor) stroke-width="1.5" stroke-linecap="round">
+              <path d="M21.4068 8.52621C23.8403 12.0403 18 13.6711 18 9.62277L18 2" />
+              <path d="M2.59317 8.52621C0.159734 12.0403 5.99998 13.6711 5.99999 9.62277V2"/>
+              <path d="M6 16L11.8232 21.8232C11.9209 21.9209 12.0791 21.9209 12.1768 21.8232L18 16"/>
+              <path d="M12 12V21"/>
+              <path d="M18 6C18 9.31371 15.3137 12 12 12C8.68629 12 6 9.31371 6 6"/>
+              </g>
           </svg>
         </div>
         <div class="wind-speed">
