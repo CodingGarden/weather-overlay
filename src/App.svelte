@@ -73,6 +73,11 @@
           </svg>
         </div>
         <div class="wind-speed">
+          {#if !showMetric}
+            {currentWeather.wind_speed.mph} mph
+          {:else}
+            {currentWeather.wind_speed.kph} km/h
+          {/if}
           {currentWeather.wind_speed.mph} mph
           <!-- {currentWeather.wind_speed.kph} km/h -->
         </div>
