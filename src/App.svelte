@@ -57,11 +57,11 @@
       </div>
       {#if !showMetric}
         <div class="temperature">
-          {currentWeather.temperature.F} <span class="unit">°F</span>
+          {currentWeather.temperature.F}<span class="unit">°F</span>
         </div>
       {:else}
         <div in:fade class="temperature">
-          {currentWeather.temperature.C} <span class="unit">°C</span>
+          {currentWeather.temperature.C}<span class="unit">°C</span>
         </div>
       {/if}
       <div class="wind">
