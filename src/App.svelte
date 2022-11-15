@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fly } from 'svelte/transition';
+  import { fly, fade } from 'svelte/transition';
   import type { WeatherResult } from "./lib/weatherAPI";
   import { getWeather } from "./lib/weatherAPI";
 
@@ -7,10 +7,15 @@
   let weatherVisible = false;
   const params = new URLSearchParams(window.location.search);
   let errorMessage = "";
+  let showMetric = false;
+  let showDuration = 10 * 1000;
+  let hideDuration = 60 * 1000;
+
   if (!params.has("lat") || !params.has("lon")) {
-    errorMessage = "Missing required params.";
+    errorMessage =
+      "Requires location parameters in the url.\n\nExample: https://site.location.com/?lat=40.7128&lon=74.0060";
   } else {
-    getLatestAndShow();
+    getLatestAndShowOrHide();
   }
 
   async function getCurrentWeather() {
@@ -24,14 +29,16 @@
     }
   }
 
-  async function getLatestAndShow() {
+  async function getLatestAndShowOrHide() {
     if (!weatherVisible) {
+      showMetric = false;
       await getCurrentWeather();
       weatherVisible = true;
-      setTimeout(getLatestAndShow, 10 * 1000);
+      setTimeout(() => (showMetric = true), showDuration / 2);
+      setTimeout(getLatestAndShowOrHide, showDuration);
     } else {
       weatherVisible = false;
-      setTimeout(getLatestAndShow, 60 * 1000);
+      setTimeout(getLatestAndShowOrHide, hideDuration);
     }
   }
   
@@ -49,7 +56,7 @@
 
 <main>
   {#if errorMessage}
-    <div>{errorMessage}</div>
+    <div class="error">{errorMessage}</div>
   {/if}
   {#if currentWeather && weatherVisible}
     <div class="container" transition:fly="{{ x: -600, duration: 2000 }}">
@@ -60,8 +67,15 @@
         />
       </div>
       <div class="temperature">
-        {currentWeather.temperature.F}<span class="unit">°F</span>
-        <!-- {currentWeather.temperature.C} <span class="unit">°C</span> -->
+        {#if !showMetric}
+          <span out:fade={{ duration: 800 }}>
+            {currentWeather.temperature.F}<span class="unit">°F</span>
+          </span>
+        {:else}
+          <span in:fade={{ duration: 800 }}>
+            {currentWeather.temperature.C}<span class="unit">°C</span>
+          </span>
+        {/if}
       </div>
       <div class="wind">
         <div class="wind-direction" style:transform={`rotate(${currentWeather.wind_from_direction}deg)`}>
@@ -86,8 +100,15 @@
           </svg>
         </div>
         <div class="wind-speed">
-          {currentWeather.wind_speed.mph} mph
-          <!-- {currentWeather.wind_speed.kph} km/h -->
+          {#if !showMetric}
+            <span out:fade={{ duration: 800 }}>
+              {currentWeather.wind_speed.mph} mph
+            </span>
+          {:else}
+            <span in:fade={{ duration: 800 }}>
+              {currentWeather.wind_speed.kph} km/h
+           </span>
+          {/if}
         </div>
       </div>
       <div class="credit">
@@ -112,8 +133,13 @@
   .temperature {
     text-align: center;
     line-height: 20vmin;
+    display: grid;
   }
 
+  .temperature span {
+    grid-area: 1/1;
+  }
+  
   .container {
     width: 55vmin;
     position: relative;
@@ -168,6 +194,11 @@
   .wind-speed {
     margin-left: 2vmin;
     font-size: 6vmin;
+    display: grid;
+  }
+  
+  .wind-speed span {
+    grid-area: 1/1;
   }
 
   .unit {
@@ -181,5 +212,13 @@
     font-style: italic;
     text-align: center;
     font-weight: 200;
+  }
+
+  div.error {
+    font-size: 5vmin;
+    font-weight: 200;
+    text-align: center;
+    color: black;
+    background-color: white;
   }
 </style>
