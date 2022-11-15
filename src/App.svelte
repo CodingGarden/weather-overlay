@@ -76,12 +76,14 @@
         </div>
         <div class="wind-speed">
           {#if !showMetric}
-            {currentWeather.wind_speed.mph} mph
+            <span out:fade={{ duration: 800 }}>
+              {currentWeather.wind_speed.mph} mph
+            </span>
           {:else}
-            {currentWeather.wind_speed.kph} km/h
+            <span in:fade={{ duration: 800 }}>
+              {currentWeather.wind_speed.kph} km/h
+           </span>
           {/if}
-          {currentWeather.wind_speed.mph} mph
-          <!-- {currentWeather.wind_speed.kph} km/h -->
         </div>
       </div>
       <div class="credit">
@@ -167,6 +169,11 @@
   .wind-speed {
     margin-left: 2vmin;
     font-size: 6vmin;
+    display: grid;
+  }
+  
+  .wind-speed span {
+    grid-area: 1/1;
   }
 
   .unit {
