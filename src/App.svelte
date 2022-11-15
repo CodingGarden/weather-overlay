@@ -8,8 +8,8 @@
   const params = new URLSearchParams(window.location.search);
   let errorMessage = "";
   let showMetric = false;
-  let showDuration = 20000;
-  let hideDuration = 60000;
+  let showDuration = 10 * 1000;
+  let hideDuration = 60 * 1000;
 
   if (!params.has("lat") || !params.has("lon")) {
     errorMessage =
