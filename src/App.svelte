@@ -55,15 +55,17 @@
           src={`images/svg/${currentWeather.symbol_code}.svg`}
         />
       </div>
-      {#if !showMetric}
-        <div class="temperature">
-          {currentWeather.temperature.F}<span class="unit">°F</span>
-        </div>
-      {:else}
-        <div in:fade class="temperature">
-          {currentWeather.temperature.C}<span class="unit">°C</span>
-        </div>
-      {/if}
+      <div class="temperature">
+        {#if !showMetric}
+          <span out:fade={{ duration: 800 }}>
+            {currentWeather.temperature.F}<span class="unit">°F</span>
+          </span>
+        {:else}
+          <span in:fade={{ duration: 800 }}>
+            {currentWeather.temperature.C}<span class="unit">°C</span>
+          </span>
+        {/if}
+      </div>
       <div class="wind">
         <div class="wind-direction" style:transform={`rotate(${currentWeather.wind_from_direction}deg)`}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-wind-icon">
@@ -104,8 +106,13 @@
   .temperature {
     text-align: center;
     line-height: 20vmin;
+    display: grid;
   }
 
+  .temperature span {
+    grid-area: 1/1;
+  }
+  
   .container {
     width: 55vmin;
     position: relative;
