@@ -8,8 +8,8 @@
   const params = new URLSearchParams(window.location.search);
   let errorMessage = "";
   let showMetric = false;
-  let showDuration = 20000;
-  let hideDuration = 60000;
+  let showDuration = 10 * 1000;
+  let hideDuration = 60 * 1000;
 
   if (!params.has("lat") || !params.has("lon")) {
     errorMessage =
@@ -57,11 +57,11 @@
       </div>
       {#if !showMetric}
         <div class="temperature">
-          {currentWeather.temperature.F} <span class="unit">°F</span>
+          {currentWeather.temperature.F}<span class="unit">°F</span>
         </div>
       {:else}
         <div in:fade class="temperature">
-          {currentWeather.temperature.C} <span class="unit">°C</span>
+          {currentWeather.temperature.C}<span class="unit">°C</span>
         </div>
       {/if}
       <div class="wind">
@@ -73,6 +73,11 @@
           </svg>
         </div>
         <div class="wind-speed">
+          {#if !showMetric}
+            {currentWeather.wind_speed.mph} mph
+          {:else}
+            {currentWeather.wind_speed.kph} km/h
+          {/if}
           {currentWeather.wind_speed.mph} mph
           <!-- {currentWeather.wind_speed.kph} km/h -->
         </div>
