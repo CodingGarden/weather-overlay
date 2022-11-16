@@ -131,6 +131,7 @@
   }
 
   .temperature {
+    margin-left: 4rem;
     text-align: center;
     line-height: 20vmin;
     display: grid;
@@ -176,7 +177,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -2vmin;
+    margin-top: 5vmin;
   }
 
   .arrow-wind-icon {
@@ -202,8 +203,12 @@
   }
 
   .unit {
+    position: relative;
     margin-left: 2vmin;
-    font-size: 10vmin;
+    font-size: 8vmin;
+    vertical-align: super;
+    top: -2rem;
+    left: -1rem;
   }
 
   .credit {
